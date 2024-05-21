@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include <cstdint>
+#include <vector>
 
 namespace math
 {
@@ -24,9 +25,6 @@ namespace math
     struct Point {
         using value_t = T;
         T x{}, y{};
-
-    protected:
-        Point() = default;
     };
 
     template<typename T>
