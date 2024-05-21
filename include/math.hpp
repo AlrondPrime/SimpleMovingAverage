@@ -39,9 +39,6 @@ namespace math
         return !(left==right);
     }
 
-    using PointF = Point<float>;
-    using PointD = Point<double>;
-
     /**
      * @brief count simple moving average
      * @details https://en.wikipedia.org/wiki/Moving_average#Simple_moving_average

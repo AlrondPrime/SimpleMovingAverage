@@ -8,6 +8,7 @@
 #include <chrono>
 #include <iomanip>
 #include <iostream>
+#include <map>
 #include <vector>
 
 namespace tests
@@ -85,20 +86,37 @@ namespace tests
 
             // Measurement
             std::chrono::system_clock::time_point begin, end;
+            std::map<uint32_t, double> measures;
             for (const auto &windowSize: desiredWindows)
             {
-                begin = std::chrono::system_clock::now();
-                const auto result = math::sma(dataset, windowSize);
-                end = std::chrono::system_clock::now();
-                // we measure in Points/second
-                const auto secondsElapsed =
-                    std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()
-                    / 1'000'000'000.0;
-                const double measure = result.size() / secondsElapsed;
-                std::cout << "window size " << windowSize << ", got " << result.size()
-                          << " points in " << secondsElapsed << " seconds, so we measured "
-                          << measure << " Points/second" << std::endl;
+                measures.emplace(windowSize, 0);
             }
+
+            constexpr uint32_t totalCounts = 1000;
+            double secondsElapsed;
+            for (size_t i{}; i < totalCounts; ++i)
+            {
+                for (auto &[windowSize, measure]: measures)
+                {
+                    begin = std::chrono::system_clock::now();
+                    const auto result = math::sma(dataset, windowSize);
+                    end = std::chrono::system_clock::now();
+                    // we measure in Points/second
+                    secondsElapsed =
+                        std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin).count()
+                        / 1'000'000'000.0;
+                    measure += result.size() / secondsElapsed;
+                }
+            }
+
+            for (auto &[windowSize, measure]: measures)
+            {
+                measure /= totalCounts;
+                std::cout << "for window size " << windowSize << " we measured " << measure
+                      << " Points/second" << std::endl;
+            }
+
+
         }
     } // namespace detail
 
