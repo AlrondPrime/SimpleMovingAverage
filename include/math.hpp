@@ -3,6 +3,7 @@
 #include <cmath>
 #include <cstdint>
 #include <vector>
+#include <stdexcept>
 
 namespace math
 {
@@ -47,7 +48,9 @@ namespace math
     std::vector<Point<T>>
     sma(const std::vector<Point<T>> &coordinates, const uint32_t windowSize)
     {
-        // TODO: add boundary checks
+        if(coordinates.size() < windowSize)
+            throw std::logic_error{"window size less than dataset size"};
+
         std::vector<Point<T>> averages;
         averages.reserve(coordinates.size() / windowSize);
         typename Point<T>::value_t average;
